@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/src/material/dialog.dart' as Dialog;
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class DateTimeRangePicker {
   final _cancelText = "Cancel";
@@ -66,6 +68,9 @@ class _PickerWidgetState extends State<PickerWidget>
 
   TabController _tabController;
 
+  final fromDate = DateTime.now();
+  final toDate = DateTime.now().add(Duration(days: 30));
+
   @override
   void initState() {
     super.initState();
@@ -80,6 +85,7 @@ class _PickerWidgetState extends State<PickerWidget>
 
   @override
   Widget build(BuildContext context) {
+    print(toDate);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -91,7 +97,13 @@ class _PickerWidgetState extends State<PickerWidget>
       body: TabBarView(
         controller: _tabController,
         children: myTabs.map((Tab tab) {
-          return Center(child: Text(tab.text));
+          return CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                initialDateTime: tab.text == "From" ? fromDate : toDate,
+                onDateTimeChanged: (DateTime newDateTime) {
+
+                },
+              );
         }).toList(),
       ),
     );
