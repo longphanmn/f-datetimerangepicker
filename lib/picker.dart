@@ -1,19 +1,31 @@
-import 'package:flutter/src/material/dialog.dart' as Dialog;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+
+enum DateTimeRangePickerMode {
+  time,
+  date,
+  dateAndTime,
+}
 
 class DateTimeRangePicker {
   final startText;
   final endText;
+  final DateTimeRangePickerMode mode;
   final _cancelText = "Cancel";
   final _confirmText = "Done";
+
+  DateTime startTime;
+  DateTime endTime;
 
   final VoidCallback onCancel;
   final VoidCallback onConfirm;
 
-  DateTimeRangePicker({Key key, this.onCancel, this.onConfirm, this.startText = "Start", this.endText = "End"});
+  final int interval;
 
-  void showDialog(BuildContext context) {
+  DateTimeRangePicker({Key key, this.onCancel, this.onConfirm, this.startText = "Start", this.endText = "End",
+    this.startTime, this.endTime, this.mode = DateTimeRangePickerMode.dateAndTime, this.interval = 15});
+
+  void showPicker(BuildContext context) {
     List<Widget> actions = [];
 
     if (_cancelText != null && _cancelText != "") {
@@ -34,24 +46,37 @@ class DateTimeRangePicker {
           child: new Text(_confirmText)));
     }
 
+    if (startTime == null){
+      startTime = DateTime.now();
+    }
+
+    // Remove minutes and seconds
+    startTime = startTime.subtract(Duration(minutes: startTime.minute, seconds: startTime.second));
+
+    if (endTime == null){
+      endTime = startTime.add(Duration(days: mode == DateTimeRangePickerMode.time ? 0 : 1, hours: mode == DateTimeRangePickerMode.time ? 2 : 0));
+    }
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    print(startText);
 
-    Dialog.showDialog(
+    showDialog(
         context: context,
         builder: (BuildContext context) {
           return Padding(
             padding: EdgeInsets.only(
-                top: height * 0.2,
-                bottom: height * 0.3,
+                top: height * 0.25,
+                bottom: height * 0.25,
                 left: width * 0.1,
                 right: width * 0.1),
-            child: PickerWidget(actions: actions, 
-              tabs: [
+            child: PickerWidget(actions, 
+              [
                 Tab(text: startText),
                 Tab(text: endText),
-              ]
+              ],
+              startTime,
+              endTime,
+              interval
             ),
           );
         });
@@ -59,10 +84,13 @@ class DateTimeRangePicker {
 }
 
 class PickerWidget extends StatefulWidget {
-  final List<Widget> actions;
-  final List<Tab> tabs;
+  final List<Widget> _actions;
+  final List<Tab> _tabs;
+  final DateTime _start;
+  final DateTime _end;
+  final int _interval;
 
-  PickerWidget({Key key, this.actions, this.tabs}) : super(key: key);
+  PickerWidget( this._actions, this._tabs, this._start, this._end, this._interval, {Key key}) : super(key: key);
 
   _PickerWidgetState createState() => _PickerWidgetState();
 }
@@ -71,13 +99,10 @@ class _PickerWidgetState extends State<PickerWidget>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
-  final fromDate = DateTime.now();
-  final toDate = DateTime.now().add(Duration(days: 30));
-
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: widget.tabs.length);
+    _tabController = TabController(vsync: this, length: widget._tabs.length);
   }
 
   @override
@@ -96,7 +121,7 @@ class _PickerWidgetState extends State<PickerWidget>
           title: Container(
             child: TabBar(
               controller: _tabController,
-              tabs: widget.tabs,
+              tabs: widget._tabs,
               labelColor: Theme.of(context).primaryColor,
             ),
           ),
@@ -108,10 +133,11 @@ class _PickerWidgetState extends State<PickerWidget>
               alignment: Alignment.topCenter,
               child: TabBarView(
                 controller: _tabController,
-                children: widget.tabs.map((Tab tab) {
+                children: widget._tabs.map((Tab tab) {
                   return CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.dateAndTime,
-                    initialDateTime: tab.text == widget.tabs.first.text ? fromDate : toDate,
+                    minuteInterval: widget._interval,
+                    initialDateTime: tab.text == widget._tabs.first.text ? widget._start : widget._end,
                     onDateTimeChanged: (DateTime newDateTime) {},
                   );
                 }).toList(),
@@ -121,7 +147,7 @@ class _PickerWidgetState extends State<PickerWidget>
               alignment: Alignment.bottomCenter,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: widget.actions,
+                children: widget._actions,
               ),
             )
           ],
