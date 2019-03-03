@@ -1,4 +1,3 @@
-
 import 'package:flutter/src/material/dialog.dart' as Dialog;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,27 +33,29 @@ class DateTimeRangePicker {
           },
           child: new Text(_confirmText)));
     }
+    
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
 
     Dialog.showDialog(
         context: context,
         builder: (BuildContext context) {
-          return new AlertDialog(
-            title: Text(_title),
-            actions: actions,
-            content: makePicker(),
+          return Padding(
+            padding: EdgeInsets.only(
+                top: height * 0.2,
+                bottom: height * 0.3,
+                left: width * 0.1,
+                right: width * 0.1),
+            child: PickerWidget(actions: actions),
           );
         });
-  }
-
-  Widget makePicker() {
-    return PickerWidget();
   }
 }
 
 class PickerWidget extends StatefulWidget {
-  final Widget child;
+  final List<Widget> actions;
 
-  PickerWidget({Key key, this.child}) : super(key: key);
+  PickerWidget({Key key, this.actions}) : super(key: key);
 
   _PickerWidgetState createState() => _PickerWidgetState();
 }
@@ -85,27 +86,43 @@ class _PickerWidgetState extends State<PickerWidget>
 
   @override
   Widget build(BuildContext context) {
-    print(toDate);
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: TabBar(
-          controller: _tabController,
-          tabs: myTabs,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          title: Container(
+            child: TabBar(
+              controller: _tabController,
+              tabs: myTabs,
+              labelColor: Theme.of(context).primaryColor,
+            ),
+          ),
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: myTabs.map((Tab tab) {
-          return CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: tab.text == "From" ? fromDate : toDate,
-                onDateTimeChanged: (DateTime newDateTime) {
-
-                },
-              );
-        }).toList(),
-      ),
-    );
+        body: Stack(
+          children: <Widget>[
+            Container(
+              height: 320,
+              alignment: Alignment.topCenter,
+              child: TabBarView(
+                controller: _tabController,
+                children: myTabs.map((Tab tab) {
+                  return CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.dateAndTime,
+                    initialDateTime: tab.text == "From" ? fromDate : toDate,
+                    onDateTimeChanged: (DateTime newDateTime) {},
+                  );
+                }).toList(),
+              ),
+            ),
+            Container(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: widget.actions,
+              ),
+            )
+          ],
+        ));
   }
 }
