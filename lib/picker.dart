@@ -1,17 +1,17 @@
 import 'package:flutter/src/material/dialog.dart' as Dialog;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 
 class DateTimeRangePicker {
+  final startText;
+  final endText;
   final _cancelText = "Cancel";
   final _confirmText = "Done";
-  final _title = "Picker";
 
   final VoidCallback onCancel;
   final VoidCallback onConfirm;
 
-  DateTimeRangePicker({Key key, this.onCancel, this.onConfirm});
+  DateTimeRangePicker({Key key, this.onCancel, this.onConfirm, this.startText = "Start", this.endText = "End"});
 
   void showDialog(BuildContext context) {
     List<Widget> actions = [];
@@ -33,9 +33,10 @@ class DateTimeRangePicker {
           },
           child: new Text(_confirmText)));
     }
-    
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    print(startText);
 
     Dialog.showDialog(
         context: context,
@@ -46,7 +47,12 @@ class DateTimeRangePicker {
                 bottom: height * 0.3,
                 left: width * 0.1,
                 right: width * 0.1),
-            child: PickerWidget(actions: actions),
+            child: PickerWidget(actions: actions, 
+              tabs: [
+                Tab(text: startText),
+                Tab(text: endText),
+              ]
+            ),
           );
         });
   }
@@ -54,19 +60,15 @@ class DateTimeRangePicker {
 
 class PickerWidget extends StatefulWidget {
   final List<Widget> actions;
+  final List<Tab> tabs;
 
-  PickerWidget({Key key, this.actions}) : super(key: key);
+  PickerWidget({Key key, this.actions, this.tabs}) : super(key: key);
 
   _PickerWidgetState createState() => _PickerWidgetState();
 }
 
 class _PickerWidgetState extends State<PickerWidget>
     with SingleTickerProviderStateMixin {
-  final List<Tab> myTabs = <Tab>[
-    Tab(text: 'From'),
-    Tab(text: 'To'),
-  ];
-
   TabController _tabController;
 
   final fromDate = DateTime.now();
@@ -75,7 +77,7 @@ class _PickerWidgetState extends State<PickerWidget>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: myTabs.length);
+    _tabController = TabController(vsync: this, length: widget.tabs.length);
   }
 
   @override
@@ -94,7 +96,7 @@ class _PickerWidgetState extends State<PickerWidget>
           title: Container(
             child: TabBar(
               controller: _tabController,
-              tabs: myTabs,
+              tabs: widget.tabs,
               labelColor: Theme.of(context).primaryColor,
             ),
           ),
@@ -106,10 +108,10 @@ class _PickerWidgetState extends State<PickerWidget>
               alignment: Alignment.topCenter,
               child: TabBarView(
                 controller: _tabController,
-                children: myTabs.map((Tab tab) {
+                children: widget.tabs.map((Tab tab) {
                   return CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.dateAndTime,
-                    initialDateTime: tab.text == "From" ? fromDate : toDate,
+                    initialDateTime: tab.text == widget.tabs.first.text ? fromDate : toDate,
                     onDateTimeChanged: (DateTime newDateTime) {},
                   );
                 }).toList(),
