@@ -5,7 +5,7 @@
 
 Sample:
 ~~~~
-import 'package:f_datetimerangepicker/picker.dart';
+import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
 DateTimeRangePicker(
     startText: "From",
