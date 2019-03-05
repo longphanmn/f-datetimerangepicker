@@ -1,5 +1,5 @@
 # F-DateTimeRangePicker
-Date Time Range Picker for Flutter
+Date and Time Range Picker for Flutter
 
 ![](/screenshots/sc1.png)
 
