@@ -1,10 +1,12 @@
-# f_datetimerangepicker
+# F-DateTimeRangePicker
 ## Date Time Range Picker for Flutter
 
 ![](/screenshots/sc1.png)
 
 Sample:
 ~~~~
+import 'package:f_datetimerangepicker/picker.dart';
+
 DateTimeRangePicker(
     startText: "From",
     endText: "To",
