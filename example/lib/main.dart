@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
-import 'package:intl/intl.dart';
 
 void main() => runApp(MyApp());
 
@@ -67,11 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     initialEndTime: DateTime.now().add(Duration(days: 20)),
                     mode: DateTimeRangePickerMode.time,
                     onConfirm: (start, end) {
-                      final dateFormatter = DateFormat('yyyy-MM-dd – hh:mm');
-                      setState(() {
-                        resultString =
-                            "${dateFormatter.format(start)} to ${dateFormatter.format(end)} ";
-                      });
+                      print(start);
+                      print(end);
                     }).showPicker(context);
               },
             ),
