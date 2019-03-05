@@ -1,9 +1,16 @@
 # F-DateTimeRangePicker
-## Date Time Range Picker for Flutter
+Date Time Range Picker for Flutter
 
 ![](/screenshots/sc1.png)
 
-Sample:
+How to install:
+
+~~~~
+dependencies:
+  f_datetimerangepicker: ^0.0.5
+~~~~
+    
+How to use:
 ~~~~
 import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
