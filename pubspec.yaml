@@ -1,8 +1,8 @@
 name: f_datetimerangepicker
 description: Date Time Range Picker by Flutter
-version: 0.0.1
+version: 0.0.3
 author: Long Phan <long@minhnhan.in>
-homepage: https://minnhan.in
+homepage: https://minhnhan.in
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
