@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+typedef PickerConfirmCallback = void Function(
+    DateTime start, DateTime end);
+
 enum DateTimeRangePickerMode {
   time,
   date,
@@ -11,50 +14,30 @@ class DateTimeRangePicker {
   final startText;
   final endText;
   final DateTimeRangePickerMode mode;
-  final _cancelText = "Cancel";
-  final _confirmText = "Done";
 
-  DateTime startTime;
-  DateTime endTime;
+  DateTime initialStartTime;
+  DateTime initialEndTime;
 
   final VoidCallback onCancel;
-  final VoidCallback onConfirm;
+  final PickerConfirmCallback onConfirm;
 
   final int interval;
 
   DateTimeRangePicker({Key key, this.onCancel, this.onConfirm, this.startText = "Start", this.endText = "End",
-    this.startTime, this.endTime, this.mode = DateTimeRangePickerMode.dateAndTime, this.interval = 15});
+    this.initialStartTime, this.initialEndTime, this.mode = DateTimeRangePickerMode.dateAndTime, this.interval = 15});
 
   void showPicker(BuildContext context) {
-    List<Widget> actions = [];
+  
 
-    if (_cancelText != null && _cancelText != "") {
-      actions.add(new FlatButton(
-          onPressed: () {
-            Navigator.pop(context);
-            if (onCancel != null) onCancel();
-          },
-          child: new Text(_cancelText)));
-    }
-
-    if (_confirmText != null && _confirmText != "") {
-      actions.add(new FlatButton(
-          onPressed: () {
-            Navigator.pop(context);
-            if (onConfirm != null) onConfirm();
-          },
-          child: new Text(_confirmText)));
-    }
-
-    if (startTime == null){
-      startTime = DateTime.now();
+    if (initialStartTime == null){
+      initialStartTime = DateTime.now();
     }
 
     // Remove minutes and seconds
-    startTime = startTime.subtract(Duration(minutes: startTime.minute, seconds: startTime.second));
+    initialStartTime = initialStartTime.subtract(Duration(minutes: initialStartTime.minute, seconds: initialStartTime.second));
 
-    if (endTime == null){
-      endTime = startTime.add(Duration(days: mode == DateTimeRangePickerMode.time ? 0 : 1, hours: mode == DateTimeRangePickerMode.time ? 2 : 0));
+    if (initialEndTime == null){
+      initialEndTime = initialStartTime.add(Duration(days: mode == DateTimeRangePickerMode.time ? 0 : 1, hours: mode == DateTimeRangePickerMode.time ? 2 : 0));
     }
 
     double width = MediaQuery.of(context).size.width;
@@ -69,14 +52,16 @@ class DateTimeRangePicker {
                 bottom: height * 0.25,
                 left: width * 0.1,
                 right: width * 0.1),
-            child: PickerWidget(actions, 
+            child: PickerWidget(
               [
                 Tab(text: startText),
                 Tab(text: endText),
               ],
-              startTime,
-              endTime,
-              interval
+              initialStartTime,
+              initialEndTime,
+              interval,
+              this.onCancel,
+              this.onConfirm,
             ),
           );
         });
@@ -84,13 +69,15 @@ class DateTimeRangePicker {
 }
 
 class PickerWidget extends StatefulWidget {
-  final List<Widget> _actions;
   final List<Tab> _tabs;
-  final DateTime _start;
-  final DateTime _end;
   final int _interval;
+  final VoidCallback _onCancel;
+  final PickerConfirmCallback _onConfirm;
 
-  PickerWidget( this._actions, this._tabs, this._start, this._end, this._interval, {Key key}) : super(key: key);
+  final DateTime _initStart;
+  final DateTime _initEnd;
+
+  PickerWidget(this._tabs, this._initStart, this._initEnd, this._interval, this._onCancel, this._onConfirm, {Key key}) : super(key: key);
 
   _PickerWidgetState createState() => _PickerWidgetState();
 }
@@ -98,10 +85,14 @@ class PickerWidget extends StatefulWidget {
 class _PickerWidgetState extends State<PickerWidget>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  DateTime start;
+  DateTime end;
 
   @override
   void initState() {
     super.initState();
+    start = widget._initStart;
+    end = widget._initEnd;
     _tabController = TabController(vsync: this, length: widget._tabs.length);
   }
 
@@ -110,6 +101,7 @@ class _PickerWidgetState extends State<PickerWidget>
     _tabController.dispose();
     super.dispose();
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -137,8 +129,18 @@ class _PickerWidgetState extends State<PickerWidget>
                   return CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.dateAndTime,
                     minuteInterval: widget._interval,
-                    initialDateTime: tab.text == widget._tabs.first.text ? widget._start : widget._end,
-                    onDateTimeChanged: (DateTime newDateTime) {},
+                    initialDateTime: tab.text == widget._tabs.first.text ? start : end,
+                    onDateTimeChanged: (DateTime newDateTime) {
+                      if (tab.text == widget._tabs.first.text){
+                        setState(() {
+                          start = newDateTime;
+                        });
+                      } else {
+                        setState(() {
+                          end = newDateTime;
+                        });
+                      }
+                    },
                   );
                 }).toList(),
               ),
@@ -147,7 +149,26 @@ class _PickerWidgetState extends State<PickerWidget>
               alignment: Alignment.bottomCenter,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: widget._actions,
+                children: [
+                  FlatButton(
+                    onPressed: (){
+                      Navigator.pop(context);
+                      if (widget._onCancel != null){
+                        widget._onCancel();
+                      }
+                    },
+                    child: Text("Cancel"),
+                  ),
+                  FlatButton(
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                      if (widget._onConfirm != null){
+                        widget._onConfirm(start, end);
+                      }
+                    },
+                    child: Text("Done"),
+                  )
+                ],
               ),
             )
           ],
