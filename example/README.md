@@ -1,16 +1,16 @@
-# time_range_picker_app
+Example:
 
-Time Range Picker for Flutter
+~~~~
+import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+DateTimeRangePicker(
+    startText: "From",
+    endText: "To",
+    interval: 5,
+    initialStartTime: DateTime.now(),
+    initialEndTime: DateTime.now().add(Duration(days: 20)),
+    mode: DateTimeRangePickerMode.time,
+    onConfirm: (start, end) {
+        
+    }).showPicker(context);
+~~~~

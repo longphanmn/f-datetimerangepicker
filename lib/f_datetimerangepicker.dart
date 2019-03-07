@@ -51,9 +51,6 @@ class DateTimeRangePicker {
     initialEndTime = initialEndTime.subtract(Duration(
         minutes: initialEndTime.minute, seconds: initialEndTime.second));
 
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
     var pickerMode = CupertinoDatePickerMode.dateAndTime;
 
     switch (mode) {
@@ -79,12 +76,9 @@ class DateTimeRangePicker {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: height * 0.25,
-                bottom: height * 0.25,
-                left: width * 0.1,
-                right: width * 0.1),
+          return FractionallySizedBox(
+            widthFactor: 0.8,
+            heightFactor: 0.5,
             child: PickerWidget([
               Tab(text: startText),
               Tab(text: endText),

@@ -7,7 +7,7 @@ Installing:
 
 ~~~~
 dependencies:
-  f_datetimerangepicker: ^0.0.7
+  f_datetimerangepicker: ^0.1.0
 ~~~~
     
 Using:
