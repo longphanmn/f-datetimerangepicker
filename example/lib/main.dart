@@ -61,6 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 DateTimeRangePicker(
                     startText: "From",
                     endText: "To",
+                    doneText: "Yes",
+                    cancelText: "Cancel",
                     interval: 5,
                     initialStartTime: DateTime.now(),
                     initialEndTime: DateTime.now().add(Duration(days: 20)),

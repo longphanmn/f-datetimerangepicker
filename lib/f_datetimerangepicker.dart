@@ -12,6 +12,8 @@ enum DateTimeRangePickerMode {
 class DateTimeRangePicker {
   final startText;
   final endText;
+  final doneText;
+  final cancelText;
   final DateTimeRangePickerMode mode;
 
   DateTime initialStartTime;
@@ -28,6 +30,8 @@ class DateTimeRangePicker {
       this.onConfirm,
       this.startText = "Start",
       this.endText = "End",
+      this.doneText = "Done",
+      this.cancelText = "Cancel",
       this.initialStartTime,
       this.initialEndTime,
       this.mode = DateTimeRangePickerMode.dateAndTime,
@@ -83,7 +87,7 @@ class DateTimeRangePicker {
               Tab(text: startText),
               Tab(text: endText),
             ], initialStartTime, initialEndTime, interval, this.onCancel,
-                this.onConfirm, pickerMode),
+                this.onConfirm, pickerMode, this.doneText, this.cancelText),
           );
         });
   }
@@ -99,8 +103,11 @@ class PickerWidget extends StatefulWidget {
   final DateTime _initEnd;
   final CupertinoDatePickerMode _mode;
 
+  final String _doneText;
+  final String _cancelText;
+
   PickerWidget(this._tabs, this._initStart, this._initEnd, this._interval,
-      this._onCancel, this._onConfirm, this._mode,
+      this._onCancel, this._onConfirm, this._mode, this._doneText, this._cancelText,
       {Key key})
       : super(key: key);
 
@@ -110,14 +117,16 @@ class PickerWidget extends StatefulWidget {
 class _PickerWidgetState extends State<PickerWidget>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  DateTime start;
-  DateTime end;
+  DateTime _start;
+  DateTime _end;
+
 
   @override
   void initState() {
     super.initState();
-    start = widget._initStart;
-    end = widget._initEnd;
+    _start = widget._initStart;
+    _end = widget._initEnd;
+
     _tabController = TabController(vsync: this, length: widget._tabs.length);
   }
 
@@ -151,18 +160,18 @@ class _PickerWidgetState extends State<PickerWidget>
                 controller: _tabController,
                 children: widget._tabs.map((Tab tab) {
                   return CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.dateAndTime,
+                    mode: widget._mode,
                     minuteInterval: widget._interval,
                     initialDateTime:
-                        tab.text == widget._tabs.first.text ? start : end,
+                        tab.text == widget._tabs.first.text ? _start : _end,
                     onDateTimeChanged: (DateTime newDateTime) {
                       if (tab.text == widget._tabs.first.text) {
                         setState(() {
-                          start = newDateTime;
+                          _start = newDateTime;
                         });
                       } else {
                         setState(() {
-                          end = newDateTime;
+                          _end = newDateTime;
                         });
                       }
                     },
@@ -182,16 +191,16 @@ class _PickerWidgetState extends State<PickerWidget>
                         widget._onCancel();
                       }
                     },
-                    child: Text("Cancel"),
+                    child: Text(widget._cancelText),
                   ),
                   FlatButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                       if (widget._onConfirm != null) {
-                        widget._onConfirm(start, end);
+                        widget._onConfirm(_start, _end);
                       }
                     },
-                    child: Text("Done"),
+                    child: Text(widget._doneText),
                   )
                 ],
               ),
