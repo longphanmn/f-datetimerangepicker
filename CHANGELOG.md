@@ -1,3 +1,8 @@
+## 0.1.1
+
+- Support change mode
+- Allow change cancel and done text
+
 ## 0.1.0
 
 - Use FractionallySizedBox
