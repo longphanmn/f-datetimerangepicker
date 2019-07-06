@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     interval: 5,
                     initialStartTime: DateTime.now(),
                     initialEndTime: DateTime.now().add(Duration(days: 20)),
-                    mode: DateTimeRangePickerMode.time,
+                    mode: DateTimeRangePickerMode.dateAndTime,
                     onConfirm: (start, end) {
                       print(start);
                       print(end);
