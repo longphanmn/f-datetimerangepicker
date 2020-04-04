@@ -7,7 +7,7 @@ Installing:
 
 ~~~~
 dependencies:
-  f_datetimerangepicker: ^0.1.1
+  f_datetimerangepicker: ^0.1.2
 ~~~~
     
 Using:
@@ -24,6 +24,7 @@ import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
                     initialStartTime: DateTime.now(),
                     initialEndTime: DateTime.now().add(Duration(days: 20)),
                     mode: DateTimeRangePickerMode.dateAndTime,
+                    limitTime: true,
                     onConfirm: (start, end) {
                       print(start);
                       print(end);

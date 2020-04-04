@@ -14,6 +14,7 @@ class DateTimeRangePicker {
   final endText;
   final doneText;
   final cancelText;
+  final bool limitTime;
   final DateTimeRangePickerMode mode;
 
   DateTime initialStartTime;
@@ -35,6 +36,7 @@ class DateTimeRangePicker {
       this.initialStartTime,
       this.initialEndTime,
       this.mode = DateTimeRangePickerMode.dateAndTime,
+      this.limitTime = true,
       this.interval = 15});
 
   void showPicker(BuildContext context) {
@@ -42,7 +44,7 @@ class DateTimeRangePicker {
       initialStartTime = DateTime.now();
     }
 
-    // Remove minutes and seconds
+    // Remove minutes and seconds to prevent exception of cupertino picker: initial minute is not divisible by minute interval
     initialStartTime = initialStartTime.subtract(Duration(
         minutes: initialStartTime.minute, seconds: initialStartTime.second));
 
@@ -87,7 +89,7 @@ class DateTimeRangePicker {
               Tab(text: startText),
               Tab(text: endText),
             ], initialStartTime, initialEndTime, interval, this.onCancel,
-                this.onConfirm, pickerMode, this.doneText, this.cancelText),
+                this.onConfirm, pickerMode, this.doneText, this.cancelText, this.limitTime),
           );
         });
   }
@@ -105,9 +107,10 @@ class PickerWidget extends StatefulWidget {
 
   final String _doneText;
   final String _cancelText;
+  final bool _limitTime;
 
   PickerWidget(this._tabs, this._initStart, this._initEnd, this._interval,
-      this._onCancel, this._onConfirm, this._mode, this._doneText, this._cancelText,
+      this._onCancel, this._onConfirm, this._mode, this._doneText, this._cancelText, this._limitTime,
       {Key key})
       : super(key: key);
 
@@ -162,6 +165,8 @@ class _PickerWidgetState extends State<PickerWidget>
                   return CupertinoDatePicker(
                     mode: widget._mode,
                     minuteInterval: widget._interval,
+                    minimumDate: widget._limitTime && tab.text == widget._tabs.first.text ? _start : null,
+                    maximumDate: widget._limitTime && tab.text == widget._tabs.last.text ? _end : null,
                     initialDateTime:
                         tab.text == widget._tabs.first.text ? _start : _end,
                     onDateTimeChanged: (DateTime newDateTime) {
