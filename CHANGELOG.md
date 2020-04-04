@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Allow minimum & maximum time cap
+
 ## 0.1.1
 
 - Support change mode

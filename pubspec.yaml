@@ -1,7 +1,6 @@
 name: f_datetimerangepicker
 description: Date and Time Range Picker for Flutter using Cupertino. Support pick date range, time range, date and time range.
 version: 0.1.2
-author: Long Phan <long@minhnhan.in>
 homepage: https://minhnhan.in
 repository: https://github.com/longphanmn/f-datetimerangepicker
 

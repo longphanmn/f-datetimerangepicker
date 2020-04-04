@@ -10,6 +10,7 @@ DateTimeRangePicker(
     initialStartTime: DateTime.now(),
     initialEndTime: DateTime.now().add(Duration(days: 20)),
     mode: DateTimeRangePickerMode.time,
+    limitTime: true,
     onConfirm: (start, end) {
         
     }).showPicker(context);
