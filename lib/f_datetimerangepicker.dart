@@ -14,11 +14,12 @@ class DateTimeRangePicker {
   final endText;
   final doneText;
   final cancelText;
-  final bool limitTime;
   final DateTimeRangePickerMode mode;
 
   DateTime initialStartTime;
   DateTime initialEndTime;
+  DateTime minimumTime;
+  DateTime maximumTime;
 
   final VoidCallback onCancel;
   final PickerConfirmCallback onConfirm;
@@ -36,7 +37,8 @@ class DateTimeRangePicker {
       this.initialStartTime,
       this.initialEndTime,
       this.mode = DateTimeRangePickerMode.dateAndTime,
-      this.limitTime = true,
+      this.minimumTime,
+      this.maximumTime,
       this.interval = 15});
 
   void showPicker(BuildContext context) {
@@ -56,6 +58,16 @@ class DateTimeRangePicker {
 
     initialEndTime = initialEndTime.subtract(Duration(
         minutes: initialEndTime.minute, seconds: initialEndTime.second));
+    
+    if (minimumTime != null){
+      minimumTime = minimumTime.subtract(Duration(
+        minutes: minimumTime.minute, seconds: minimumTime.second));
+    }
+
+    if (maximumTime != null){
+      maximumTime = maximumTime.subtract(Duration(
+        minutes: maximumTime.minute, seconds: maximumTime.second));
+    }
 
     var pickerMode = CupertinoDatePickerMode.dateAndTime;
 
@@ -89,7 +101,7 @@ class DateTimeRangePicker {
               Tab(text: startText),
               Tab(text: endText),
             ], initialStartTime, initialEndTime, interval, this.onCancel,
-                this.onConfirm, pickerMode, this.doneText, this.cancelText, this.limitTime),
+                this.onConfirm, pickerMode, this.doneText, this.cancelText, this.minimumTime, this.maximumTime),
           );
         });
   }
@@ -107,10 +119,11 @@ class PickerWidget extends StatefulWidget {
 
   final String _doneText;
   final String _cancelText;
-  final bool _limitTime;
+  final DateTime _minimumTime;
+  final DateTime _maximumTime;
 
   PickerWidget(this._tabs, this._initStart, this._initEnd, this._interval,
-      this._onCancel, this._onConfirm, this._mode, this._doneText, this._cancelText, this._limitTime,
+      this._onCancel, this._onConfirm, this._mode, this._doneText, this._cancelText, this._minimumTime, this._maximumTime,
       {Key key})
       : super(key: key);
 
@@ -165,8 +178,8 @@ class _PickerWidgetState extends State<PickerWidget>
                   return CupertinoDatePicker(
                     mode: widget._mode,
                     minuteInterval: widget._interval,
-                    minimumDate: widget._limitTime && tab.text == widget._tabs.first.text ? _start : null,
-                    maximumDate: widget._limitTime && tab.text == widget._tabs.last.text ? _end : null,
+                    minimumDate: widget._minimumTime != null && tab.text == widget._tabs.first.text ? widget._minimumTime  : null,
+                    maximumDate: widget._maximumTime != null && tab.text == widget._tabs.last.text ? widget._maximumTime : null,
                     initialDateTime:
                         tab.text == widget._tabs.first.text ? _start : _end,
                     onDateTimeChanged: (DateTime newDateTime) {

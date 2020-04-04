@@ -1,3 +1,7 @@
+## 0.1.3
+
+- Config minimum & maximum time cap
+
 ## 0.1.2
 
 - Allow minimum & maximum time cap

@@ -4,14 +4,18 @@ Example:
 import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
 DateTimeRangePicker(
-    startText: "From",
-    endText: "To",
-    interval: 5,
-    initialStartTime: DateTime.now(),
-    initialEndTime: DateTime.now().add(Duration(days: 20)),
-    mode: DateTimeRangePickerMode.time,
-    limitTime: true,
-    onConfirm: (start, end) {
-        
-    }).showPicker(context);
+                    startText: "From",
+                    endText: "To",
+                    doneText: "Yes",
+                    cancelText: "Cancel",
+                    interval: 5,
+                    initialStartTime: DateTime.now(),
+                    initialEndTime: DateTime.now().add(Duration(days: 20)),
+                    mode: DateTimeRangePickerMode.dateAndTime,
+                    minimumTime: DateTime.now().subtract(Duration(days: 5)),
+                    maximumTime: DateTime.now().add(Duration(days: 25)),
+                    onConfirm: (start, end) {
+                      print(start);
+                      print(end);
+                    }).showPicker(context);
 ~~~~

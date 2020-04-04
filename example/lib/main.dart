@@ -58,16 +58,18 @@ class _MyHomePageState extends State<MyHomePage> {
             FlatButton(
               child: Text("Open"),
               onPressed: () {
+                final now = DateTime.now();
                 DateTimeRangePicker(
                     startText: "From",
                     endText: "To",
                     doneText: "Yes",
                     cancelText: "Cancel",
                     interval: 5,
-                    initialStartTime: DateTime.now(),
-                    initialEndTime: DateTime.now().add(Duration(days: 20)),
+                    initialStartTime: now,
+                    initialEndTime: now.add(Duration(days: 20)),
                     mode: DateTimeRangePickerMode.dateAndTime,
-                    limitTime: true,
+                    minimumTime: now.subtract(Duration(days: 5)),
+                    maximumTime: now.add(Duration(days: 25)),
                     onConfirm: (start, end) {
                       print(start);
                       print(end);
