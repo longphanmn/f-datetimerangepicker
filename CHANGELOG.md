@@ -1,3 +1,8 @@
+## 0.1.4
+
+- Support 24hrs format
+
+
 ## 0.1.3
 
 - Config minimum & maximum time cap

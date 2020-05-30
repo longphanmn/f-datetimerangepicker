@@ -14,6 +14,7 @@ DateTimeRangePicker(
                     mode: DateTimeRangePickerMode.dateAndTime,
                     minimumTime: DateTime.now().subtract(Duration(days: 5)),
                     maximumTime: DateTime.now().add(Duration(days: 25)),
+                    use24hFormat: true,
                     onConfirm: (start, end) {
                       print(start);
                       print(end);
