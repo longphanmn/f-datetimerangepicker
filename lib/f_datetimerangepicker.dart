@@ -17,20 +17,20 @@ class DateTimeRangePicker {
   final bool use24hFormat;
   final DateTimeRangePickerMode mode;
 
-  DateTime initialStartTime;
-  DateTime initialEndTime;
-  DateTime minimumTime;
-  DateTime maximumTime;
+  DateTime? initialStartTime;
+  DateTime? initialEndTime;
+  DateTime? minimumTime;
+  DateTime? maximumTime;
 
-  final VoidCallback onCancel;
+  void Function()? onCancel;
   final PickerConfirmCallback onConfirm;
 
   final int interval;
 
   DateTimeRangePicker(
-      {Key key,
+      {Key? key,
+      required this.onConfirm,
       this.onCancel,
-      this.onConfirm,
       this.startText = "Start",
       this.endText = "End",
       this.doneText = "Done",
@@ -49,26 +49,26 @@ class DateTimeRangePicker {
     }
 
     // Remove minutes and seconds to prevent exception of cupertino picker: initial minute is not divisible by minute interval
-    initialStartTime = initialStartTime.subtract(Duration(
-        minutes: initialStartTime.minute, seconds: initialStartTime.second));
+    initialStartTime = initialStartTime!.subtract(Duration(
+        minutes: initialStartTime!.minute, seconds: initialStartTime!.second));
 
     if (initialEndTime == null) {
-      initialEndTime = initialStartTime.add(Duration(
+      initialEndTime = initialStartTime!.add(Duration(
           days: mode == DateTimeRangePickerMode.time ? 0 : 1,
           hours: mode == DateTimeRangePickerMode.time ? 2 : 0));
     }
 
-    initialEndTime = initialEndTime.subtract(Duration(
-        minutes: initialEndTime.minute, seconds: initialEndTime.second));
+    initialEndTime = initialEndTime!.subtract(Duration(
+        minutes: initialEndTime!.minute, seconds: initialEndTime!.second));
 
     if (minimumTime != null) {
-      minimumTime = minimumTime.subtract(
-          Duration(minutes: minimumTime.minute, seconds: minimumTime.second));
+      minimumTime = minimumTime!.subtract(
+          Duration(minutes: minimumTime!.minute, seconds: minimumTime!.second));
     }
 
     if (maximumTime != null) {
-      maximumTime = maximumTime.subtract(
-          Duration(minutes: maximumTime.minute, seconds: maximumTime.second));
+      maximumTime = maximumTime!.subtract(
+          Duration(minutes: maximumTime!.minute, seconds: maximumTime!.second));
     }
 
     var pickerMode = CupertinoDatePickerMode.dateAndTime;
@@ -103,16 +103,16 @@ class DateTimeRangePicker {
               Tab(text: startText),
               Tab(text: endText),
             ],
-                initialStartTime,
-                initialEndTime,
+                initialStartTime!,
+                initialEndTime!,
                 interval,
                 this.onCancel,
                 this.onConfirm,
                 pickerMode,
                 this.doneText,
                 this.cancelText,
-                this.minimumTime,
-                this.maximumTime,
+                this.minimumTime as DateTime,
+                this.maximumTime as DateTime,
                 this.use24hFormat),
           );
         });
@@ -122,8 +122,8 @@ class DateTimeRangePicker {
 class PickerWidget extends StatefulWidget {
   final List<Tab> _tabs;
   final int _interval;
-  final VoidCallback _onCancel;
-  final PickerConfirmCallback _onConfirm;
+  final VoidCallback? _onCancel;
+  final PickerConfirmCallback? _onConfirm;
 
   final DateTime _initStart;
   final DateTime _initEnd;
@@ -131,8 +131,8 @@ class PickerWidget extends StatefulWidget {
 
   final String _doneText;
   final String _cancelText;
-  final DateTime _minimumTime;
-  final DateTime _maximumTime;
+  final DateTime? _minimumTime;
+  final DateTime? _maximumTime;
   final bool _use24hFormat;
 
   PickerWidget(
@@ -148,7 +148,7 @@ class PickerWidget extends StatefulWidget {
       this._minimumTime,
       this._maximumTime,
       this._use24hFormat,
-      {Key key})
+      {Key? key})
       : super(key: key);
 
   _PickerWidgetState createState() => _PickerWidgetState();
@@ -156,9 +156,9 @@ class PickerWidget extends StatefulWidget {
 
 class _PickerWidgetState extends State<PickerWidget>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
-  DateTime _start;
-  DateTime _end;
+  late TabController _tabController;
+  late DateTime _start;
+  late DateTime _end;
 
   @override
   void initState() {
@@ -232,20 +232,20 @@ class _PickerWidgetState extends State<PickerWidget>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       Navigator.pop(context);
                       if (widget._onCancel != null) {
-                        widget._onCancel();
+                        widget._onCancel!();
                       }
                     },
                     child: Text(widget._cancelText),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                       if (widget._onConfirm != null) {
-                        widget._onConfirm(_start, _end);
+                        widget._onConfirm!(_start, _end);
                       }
                     },
                     child: Text(widget._doneText),
