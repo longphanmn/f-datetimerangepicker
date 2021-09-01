@@ -1,3 +1,7 @@
+## 0.2.0
+
+- Null safety
+
 ## 0.1.4
 
 - Support 24hrs format

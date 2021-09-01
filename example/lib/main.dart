@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title = "Example"}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -45,7 +45,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String resultString;
+  String? resultString;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            FlatButton(
+            TextButton(
               child: Text("Open"),
               onPressed: () {
                 DateTimeRangePicker(
